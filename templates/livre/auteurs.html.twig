@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Auteurs{% endblock %}
+
+{% block body %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Auteurs</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ auteurs|length }} auteur(s) enregistré(s)</p>
+    </div>
+</div>
+
+{# ── Formulaire rapide pour ajouter un auteur ──── #}
+{# Ici on utilise un formulaire HTML brut (pas de Form Type)
+   car le formulaire est très simple : juste un champ texte #}
+<form method="POST" action="{{ path('app_auteur_index') }}"
+      class="flex gap-3 mb-8">
+    <input
+        type="text"
+        name="nom"
+        placeholder="Nom de l'auteur..."
+        required
+        class="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-gray-500"
+    >
+    <button type="submit"
+            class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-700">
+        Ajouter
+    </button>
+</form>
+
+{# ── Liste des auteurs avec leurs livres ──────── #}
+{% if auteurs is empty %}
+
+    <div class="text-center py-16 text-gray-400">
+        <p class="text-4xl mb-3">✍️</p>
+        <p>Aucun auteur pour l'instant. Commence par en ajouter un.</p>
+    </div>
+
+{% else %}
+
+    <div class="flex flex-col gap-3">
+        {% for auteur in auteurs %}
+
+            <div class="bg-white border border-gray-200 rounded-xl px-5 py-4 flex items-center justify-between">
+
+                <div>
+                    <p class="font-semibold text-gray-900">{{ auteur.nom }}</p>
+
+                    {# auteur.livres retourne tous les livres liés via ManyToMany #}
+                    {% if auteur.livres is not empty %}
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            {% for livre in auteur.livres %}
+                                {{ livre.titre }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% else %}
+                        <p class="text-xs text-gray-300 mt-0.5 italic">Aucun livre associé</p>
+                    {% endif %}
+                </div>
+
+                <span class="text-xs bg-gray-100 text-gray-500 font-semibold px-2.5 py-1 rounded-full">
+                    {{ auteur.livres|length }} livre{{ auteur.livres|length > 1 ? 's' : '' }}
+                </span>
+
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% endif %}
+
+{% endblock %}
