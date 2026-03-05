@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier — {{ livre.titre }}{% endblock %}
+
+{% block body %}
+
+<a href="{{ path('app_livre_index') }}"
+   class="text-sm text-gray-400 hover:text-gray-700 mb-6 inline-block">
+    ← Retour à la bibliothèque
+</a>
+
+<h1 class="text-3xl font-bold text-gray-900 mb-1">Modifier le livre</h1>
+<p class="text-gray-400 mb-8">{{ livre.titre }}</p>
+
+{# Exactement le même formulaire que new.html.twig
+   Les checkboxes des auteurs déjà associés seront pré-cochées automatiquement #}
+{{ form_start(form) }}
+
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-5">
+
+        <div>
+            {{ form_label(form.titre, null, {
+                'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}
+            }) }}
+            {{ form_widget(form.titre) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                {{ form_label(form.anneePublication, null, {
+                    'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}
+                }) }}
+                {{ form_widget(form.anneePublication) }}
+            </div>
+        </div>
+
+        <div>
+            {{ form_label(form.description, null, {
+                'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}
+            }) }}
+            {{ form_widget(form.description) }}
+        </div>
+
+        <div>
+            {{ form_label(form.auteurs, null, {
+                'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}
+            }) }}
+            <div class="border border-gray-200 rounded-xl p-4 flex flex-col gap-2">
+                {# Les auteurs déjà liés à ce livre auront leur checkbox cochée #}
+                {{ form_widget(form.auteurs) }}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex gap-3 mt-6">
+        <button type="submit"
+                class="bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-700">
+            Enregistrer les modifications
+        </button>
+        <a href="{{ path('app_livre_index') }}"
+           class="border border-gray-300 text-gray-500 px-6 py-3 rounded-xl text-sm hover:bg-gray-100">
+            Annuler
+        </a>
+    </div>
+
+{{ form_end(form) }}
+
+{% endblock %}
