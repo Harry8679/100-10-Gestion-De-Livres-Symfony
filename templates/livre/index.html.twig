@@ -1,20 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LivreController!{% endblock %}
+{% block title %}Bibliothèque{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/admin/Desktop/Programming/EBANG_MEZUI/100-Symfony-Projects/10-gestion-des-livres/src/Controller/LivreController.php</code></li>
-        <li>Your template at <code>/Users/admin/Desktop/Programming/EBANG_MEZUI/100-Symfony-Projects/10-gestion-des-livres/templates/livre/index.html.twig</code></li>
-    </ul>
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Bibliothèque</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ livres|length }} livre(s)</p>
+    </div>
 </div>
+
+{% if livres is empty %}
+
+    <div class="text-center py-20">
+        <p class="text-5xl mb-4">📚</p>
+        <p class="text-gray-400 mb-2">Aucun livre pour l'instant.</p>
+        <p class="text-gray-400 text-sm mb-6">
+            Commence par <a href="{{ path('app_auteur_index') }}" class="text-blue-500 underline">ajouter des auteurs</a>,
+            puis crée ton premier livre.
+        </p>
+        <a href="{{ path('app_livre_new') }}"
+           class="bg-gray-900 text-white text-sm px-5 py-2.5 rounded-xl hover:bg-gray-700">
+            Ajouter un livre
+        </a>
+    </div>
+
+{% else %}
+
+    <div class="flex flex-col gap-4">
+        {% for livre in livres %}
+
+            <div class="bg-white border border-gray-200 rounded-xl p-5 flex items-start justify-between gap-4">
+
+                <div class="flex-1">
+                    <a href="{{ path('app_livre_show', { id: livre.id }) }}"
+                       class="text-lg font-bold text-gray-900 hover:underline">
+                        {{ livre.titre }}
+                    </a>
+
+                    {# Afficher les auteurs de ce livre — c'est ici qu'on utilise la relation #}
+                    {% if livre.auteurs is not empty %}
+                        <p class="text-sm text-gray-500 mt-1">
+                            par
+                            {# livre.auteurs retourne la Collection d'objets Auteur #}
+                            {% for auteur in livre.auteurs %}
+                                <span class="font-medium text-gray-700">{{ auteur.nom }}</span>
+                                {# Ajouter une virgule entre les auteurs sauf le dernier #}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% else %}
+                        <p class="text-sm text-gray-400 mt-1 italic">Auteur inconnu</p>
+                    {% endif %}
+
+                    {% if livre.anneePublication %}
+                        <p class="text-xs text-gray-400 mt-1">{{ livre.anneePublication }}</p>
+                    {% endif %}
+                </div>
+
+                {# Badge : nombre d'auteurs #}
+                <div class="flex flex-col items-end gap-3 flex-shrink-0">
+                    <span class="text-xs bg-gray-100 text-gray-600 font-semibold px-2.5 py-1 rounded-full">
+                        {{ livre.auteurs|length }}
+                        auteur{{ livre.auteurs|length > 1 ? 's' : '' }}
+                    </span>
+
+                    <div class="flex gap-3">
+                        <a href="{{ path('app_livre_edit', { id: livre.id }) }}"
+                           class="text-sm text-blue-600 hover:underline">Modifier</a>
+                        <a href="{{ path('app_livre_delete', { id: livre.id }) }}"
+                           class="text-sm text-red-400 hover:underline"
+                           onclick="return confirm('Supprimer ce livre ?')">Supprimer</a>
+                    </div>
+                </div>
+
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% endif %}
+
 {% endblock %}
