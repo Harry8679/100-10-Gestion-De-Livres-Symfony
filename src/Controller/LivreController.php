@@ -25,22 +25,9 @@ class LivreController extends AbstractController
         ]);
     }
 
-    // ─── VOIR un livre ───────────────────────────────────────────────────────
-    #[Route('/livres/{id}', name: 'app_livre_show')]
-    public function show(int $id, LivreRepository $repo): Response
-    {
-        $livre = $repo->find($id);
-
-        if (!$livre) {
-            throw $this->createNotFoundException('Livre introuvable.');
-        }
-
-        return $this->render('livre/show.html.twig', [
-            'livre' => $livre,
-        ]);
-    }
-
     // ─── CRÉER un livre ──────────────────────────────────────────────────────
+    // ⚠️ IMPORTANT : new DOIT être avant show({id})
+    // Sinon Symfony interprète /livres/new comme /livres/{id} avec id="new"
     #[Route('/livres/new', name: 'app_livre_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -63,6 +50,21 @@ class LivreController extends AbstractController
 
         return $this->render('livre/new.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    // ─── VOIR un livre ───────────────────────────────────────────────────────
+    #[Route('/livres/{id}', name: 'app_livre_show')]
+    public function show(int $id, LivreRepository $repo): Response
+    {
+        $livre = $repo->find($id);
+
+        if (!$livre) {
+            throw $this->createNotFoundException('Livre introuvable.');
+        }
+
+        return $this->render('livre/show.html.twig', [
+            'livre' => $livre,
         ]);
     }
 
